@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import localFont from 'next/font/local';
 import './globals.css';
 
@@ -13,6 +15,12 @@ const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
+});
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {},
+  },
 });
 
 export default function rootLayout({
@@ -45,12 +53,14 @@ export default function rootLayout({
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       data-theme={darkMode ? 'dark' : 'light'}
     >
-      <div className='flex justify-end border-2 p-2'>
-        <button className='rounded-md border border-gray-300 px-2 py-1' onClick={onClickDarkMode}>
-          {darkMode ? 'Light Mode' : 'Dark Mode'}
-        </button>
-      </div>
-      {children}
+      <QueryClientProvider client={queryClient}>
+        <div className='flex justify-end border-2 p-2'>
+          <button className='rounded-md border border-gray-300 px-2 py-1' onClick={onClickDarkMode}>
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+        </div>
+        {children}
+      </QueryClientProvider>
     </body>
   );
 }
