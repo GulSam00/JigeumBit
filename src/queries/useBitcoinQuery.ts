@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-type BitcoinData = {
+interface BitcoinData {
   changePercent24Hr: string; // 24시간 가격 변동 퍼센트
   explorer: string; // 관련 블록체인 탐색기 URL
   id: string; // 자산 ID (예: bitcoin)
@@ -15,11 +15,20 @@ type BitcoinData = {
   symbol: string; // 자산 심볼 (예: BTC)
   volumeUsd24Hr: string; // 24시간 거래량 (USD)
   vwap24Hr: string; // 24시간 거래량 가중 평균 가격 (VWAP)
-};
+}
 interface BitcoinQuery {
   data: BitcoinData[];
   timestamp: number;
 }
+
+export interface useBitcoinQueryType {
+  array: BitcoinData[];
+  time: number;
+  localTime: string;
+  isLoading: boolean;
+  error: any;
+}
+
 const getBitcoins = async () => {
   const result = await axios.get<BitcoinQuery>('/api/bitcoin/assets');
   // console.log('getBitcoins result', result);
@@ -27,7 +36,7 @@ const getBitcoins = async () => {
   return data;
 };
 
-const useBitcoinQuery = () => {
+export const useBitcoinQuery = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['bitcoins'],
     queryFn: getBitcoins,
@@ -35,9 +44,14 @@ const useBitcoinQuery = () => {
     refetchOnWindowFocus: true, // 창을 포커스하면 자동으로 새로 고침
   });
 
-  // console.log('useBitcoinQuery data', data);
-  const [array, time] = [data?.data, data?.timestamp];
-  return { array, time, isLoading, error };
-};
+  if (!data) {
+    return { array: [], time: '', isLoading, error };
+  }
 
-export default useBitcoinQuery;
+  // console.log('useBitcoinQuery data', data);
+
+  const [array, time] = [data.data, data.timestamp];
+  const localTime = new Date(time).toLocaleTimeString();
+
+  return { array, time, localTime, isLoading, error };
+};
