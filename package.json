@@ -9,7 +9,6 @@
     "lint": "next lint",
     "test": "cypress open",
     "test:e2e": "start-server-and-test 'npm run dev' http://localhost:3000 'cypress run'"
-
   },
   "dependencies": {
     "@tanstack/react-query": "^5.61.0",
@@ -19,7 +18,10 @@
     "jotai": "^2.10.3",
     "next": "15.0.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-lottie": "^1.2.9",
+    "react-select": "^5.8.3",
+    "recharts": "^2.13.3"
   },
   "devDependencies": {
     "@types/node": "^20",

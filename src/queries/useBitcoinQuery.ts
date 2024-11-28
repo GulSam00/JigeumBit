@@ -3,17 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 interface BitcoinData {
-  changePercent24Hr: string; // 24시간 가격 변동 퍼센트
-  explorer: string; // 관련 블록체인 탐색기 URL
   id: string; // 자산 ID (예: bitcoin)
-  marketCapUsd: string; // 시가총액 (USD)
-  maxSupply: string; // 최대 공급량
-  name: string; // 자산 이름 (예: Bitcoin)
-  priceUsd: string; // 현재 가격 (USD)
   rank: string; // 순위 (예: 1)
-  supply: string; // 현재 공급량
   symbol: string; // 자산 심볼 (예: BTC)
+  name: string; // 자산 이름 (예: Bitcoin)
+  supply: string; // 현재 공급량
+  maxSupply: string; // 최대 공급량
+  marketCapUsd: string; // 시가총액 (USD)
   volumeUsd24Hr: string; // 24시간 거래량 (USD)
+  priceUsd: string; // 현재 가격 (USD)
+  changePercent24Hr: string; // 24시간 가격 변동 퍼센트
   vwap24Hr: string; // 24시간 거래량 가중 평균 가격 (VWAP)
 }
 interface BitcoinQuery {
@@ -22,11 +21,11 @@ interface BitcoinQuery {
 }
 
 export interface useBitcoinQueryType {
-  array: BitcoinData[];
-  time: number;
-  localTime: string;
-  isLoading: boolean;
-  error: any;
+  coinArr: BitcoinData[] | undefined;
+  time: number | undefined;
+  localTime: string | undefined;
+  isLoading?: boolean;
+  error?: any;
 }
 
 const getBitcoins = async () => {
@@ -40,18 +39,18 @@ export const useBitcoinQuery = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['bitcoins'],
     queryFn: getBitcoins,
-    refetchInterval: 1000, // 1초마다 새로 고침
+    // queryFn 오류 시 select 호출 X
+    select: data => {
+      const [coinArr, time] = [data.data, data.timestamp];
+      const coinIdArr = coinArr.map(coin => coin.id);
+      const localTime = new Date(time).toLocaleTimeString();
+      return { coinArr, coinIdArr, time, localTime };
+    },
+    refetchInterval: 3000, // 3초마다 새로 고침
     refetchOnWindowFocus: true, // 창을 포커스하면 자동으로 새로 고침
   });
 
-  if (!data) {
-    return { array: [], time: '', isLoading, error };
-  }
-
   // console.log('useBitcoinQuery data', data);
 
-  const [array, time] = [data.data, data.timestamp];
-  const localTime = new Date(time).toLocaleTimeString();
-
-  return { array, time, localTime, isLoading, error };
+  return { ...data, isLoading, error };
 };

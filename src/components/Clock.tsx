@@ -20,7 +20,7 @@ export default function Clock() {
     <div>
       {currentTime ? (
         <>
-          <h1>Current Time</h1>
+          <h1>현재 시간</h1>
           <h2>{currentTime}</h2>
         </>
       ) : (
