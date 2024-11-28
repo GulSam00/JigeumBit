@@ -18,13 +18,11 @@ export default function Clock() {
 
   return (
     <div>
-      {currentTime ? (
-        <>
-          <h1>현재 시간</h1>
-          <h2>{currentTime}</h2>
-        </>
-      ) : (
-        <div>Loading...</div>
+      {currentTime && (
+        <div className='flex gap-2 rounded-lg border-4 p-4'>
+          <div>현재 시간 : </div>
+          <div>{currentTime}</div>
+        </div>
       )}
     </div>
   );

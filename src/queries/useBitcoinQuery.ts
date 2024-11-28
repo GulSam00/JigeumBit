@@ -30,12 +30,11 @@ export interface useBitcoinQueryType {
 
 const getBitcoins = async () => {
   const result = await axios.get<BitcoinQuery>('/api/bitcoin/assets');
-  // console.log('getBitcoins result', result);
   const data = result.data;
   return data;
 };
 
-export const useBitcoinQuery = () => {
+const useBitcoinQuery = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['bitcoins'],
     queryFn: getBitcoins,
@@ -50,7 +49,7 @@ export const useBitcoinQuery = () => {
     refetchOnWindowFocus: true, // 창을 포커스하면 자동으로 새로 고침
   });
 
-  // console.log('useBitcoinQuery data', data);
-
   return { ...data, isLoading, error };
 };
+
+export default useBitcoinQuery;
