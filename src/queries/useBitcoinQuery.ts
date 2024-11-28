@@ -4,7 +4,7 @@ import axios from 'axios';
 
 interface BitcoinData {
   id: string; // 자산 ID (예: bitcoin)
-  rank: string; // 순위 (예: 1)
+  rank: string | number; // 순위 (예: 1)
   symbol: string; // 자산 심볼 (예: BTC)
   name: string; // 자산 이름 (예: Bitcoin)
   supply: string; // 현재 공급량
@@ -40,9 +40,24 @@ const useBitcoinQuery = () => {
     queryFn: getBitcoins,
     // queryFn 오류 시 select 호출 X
     select: data => {
-      const [coinArr, time] = [data.data, data.timestamp];
-      const coinIdArr = coinArr.map(coin => coin.id);
+      const [arr, time] = [data.data, data.timestamp];
+      const coinIdArr = arr.map(coin => coin.id);
       const localTime = new Date(time).toLocaleTimeString();
+      // rank 숫자로 변환
+      // 24시간 변동률 소수점 2자리 + %
+      // 24시간 거래량 소수점 2자리
+      // 시가총액 소수점 2자리
+      // 24시간 가중평균 소수점 2자리
+
+      const coinArr = arr.map(coin => ({
+        ...coin,
+        rank: Number(coin.rank),
+        changePercent24Hr: Number(coin.changePercent24Hr).toFixed(2) + '%',
+        volumeUsd24Hr: Number(coin.volumeUsd24Hr).toFixed(2),
+        marketCapUsd: Number(coin.marketCapUsd).toFixed(2),
+        vwap24Hr: Number(coin.vwap24Hr).toFixed(2),
+      }));
+
       return { coinArr, coinIdArr, time, localTime };
     },
     refetchInterval: 3000, // 3초마다 새로 고침
