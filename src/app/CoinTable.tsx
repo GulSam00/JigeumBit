@@ -16,16 +16,20 @@ interface coinColumn {
   vwap24Hr: string; // 24시간 거래량 가중 평균 가격 (VWAP)
 }
 
-export default function CoinTable({ coinArr, time, localTime }: useBitcoinQueryType) {
+export default function CoinTable({ coinArr }: useBitcoinQueryType) {
   const columns = [
     // rank, name,  priceUsd, marketCapUsd, changePercent24Hr, volumeUsd24Hr, vwap24Hr
-    { headerName: '순위', field: 'rank' },
-    { headerName: '이름', field: 'name' },
-    { headerName: '가격 (USD)', field: 'priceUsd' },
-    { headerName: '시가총액 (USD)', field: 'marketCapUsd' },
-    { headerName: '24시간 변동률', field: 'changePercent24Hr' },
-    { headerName: '24시간 거래량 (USD)', field: 'volumeUsd24Hr' },
-    { headerName: '24시간 가중평균 (USD)', field: 'vwap24Hr' },
+    { headerName: '시가 총액 순위', field: 'rank', width: 150, cellDataType: 'number' },
+    { headerName: '이름', field: 'name', width: 150, cellDataType: 'string' },
+    { headerName: '가격 (USD)', field: 'priceUsd', cellDataType: 'number' },
+    { headerName: '시가총액 (USD)', field: 'marketCapUsd', cellDataType: 'number' },
+    {
+      headerName: '24시간 변동률',
+      field: 'changePercent24Hr',
+      valueFormatter: (params: any) => `${params.value}%`,
+    },
+    { headerName: '24시간 거래량 (USD)', field: 'volumeUsd24Hr', cellDataType: 'number' },
+    { headerName: '24시간 가중평균 (USD)', field: 'vwap24Hr', cellDataType: 'number' },
   ];
 
   if (!coinArr) {
@@ -34,7 +38,6 @@ export default function CoinTable({ coinArr, time, localTime }: useBitcoinQueryT
 
   return (
     <div>
-      최신 데이터 : {localTime}
       <div className='ag-theme-quartz' style={{ height: 500 }}>
         <AgGridReact rowData={coinArr} columnDefs={columns} />
       </div>

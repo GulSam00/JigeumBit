@@ -4,16 +4,16 @@ import axios from 'axios';
 
 interface BitcoinData {
   id: string; // 자산 ID (예: bitcoin)
-  rank: string | number; // 순위 (예: 1)
+  rank: number; // 순위 (예: 1)
   symbol: string; // 자산 심볼 (예: BTC)
   name: string; // 자산 이름 (예: Bitcoin)
-  supply: string; // 현재 공급량
-  maxSupply: string; // 최대 공급량
-  marketCapUsd: string; // 시가총액 (USD)
-  volumeUsd24Hr: string; // 24시간 거래량 (USD)
-  priceUsd: string; // 현재 가격 (USD)
-  changePercent24Hr: string; // 24시간 가격 변동 퍼센트
-  vwap24Hr: string; // 24시간 거래량 가중 평균 가격 (VWAP)
+  supply: number; // 현재 공급량
+  maxSupply: number; // 최대 공급량
+  marketCapUsd: number; // 시가총액 (USD)
+  volumeUsd24Hr: number; // 24시간 거래량 (USD)
+  priceUsd: number; // 현재 가격 (USD)
+  changePercent24Hr: number; // 24시간 가격 변동 퍼센트
+  vwap24Hr: number; // 24시간 거래량 가중 평균 가격 (VWAP)
 }
 interface BitcoinQuery {
   data: BitcoinData[];
@@ -51,16 +51,19 @@ const useBitcoinQuery = () => {
 
       const coinArr = arr.map(coin => ({
         ...coin,
+        supply: Number(coin.supply),
+        maxSupply: Number(coin.maxSupply),
         rank: Number(coin.rank),
-        changePercent24Hr: Number(coin.changePercent24Hr).toFixed(2) + '%',
-        volumeUsd24Hr: Number(coin.volumeUsd24Hr).toFixed(2),
-        marketCapUsd: Number(coin.marketCapUsd).toFixed(2),
-        vwap24Hr: Number(coin.vwap24Hr).toFixed(2),
+        priceUsd: Number(Number(coin.priceUsd).toFixed(5)),
+        marketCapUsd: Number(Number(coin.marketCapUsd).toFixed(5)),
+        changePercent24Hr: Number(Number(coin.changePercent24Hr).toFixed(2)),
+        volumeUsd24Hr: Number(Number(coin.volumeUsd24Hr).toFixed(5)),
+        vwap24Hr: Number(Number(coin.vwap24Hr).toFixed(5)),
       }));
 
       return { coinArr, coinIdArr, time, localTime };
     },
-    refetchInterval: 3000, // 3초마다 새로 고침
+    refetchInterval: 10000, // 10초마다 새로 고침
     refetchOnWindowFocus: true, // 창을 포커스하면 자동으로 새로 고침
   });
 
