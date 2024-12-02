@@ -1,4 +1,3 @@
-'use client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -54,8 +53,8 @@ const useBitcoinQuery = () => {
         supply: Number(coin.supply),
         maxSupply: Number(coin.maxSupply),
         rank: Number(coin.rank),
-        priceUsd: Number(Number(coin.priceUsd).toFixed(5)),
-        marketCapUsd: Number(Number(coin.marketCapUsd).toFixed(5)),
+        priceUsd: Number(coin.priceUsd),
+        marketCapUsd: Number(coin.marketCapUsd),
         changePercent24Hr: Number(Number(coin.changePercent24Hr).toFixed(2)),
         volumeUsd24Hr: Number(Number(coin.volumeUsd24Hr).toFixed(5)),
         vwap24Hr: Number(Number(coin.vwap24Hr).toFixed(5)),

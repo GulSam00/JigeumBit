@@ -9,7 +9,6 @@ import { coinId } from '@/lib';
 export default function CoinChart({ coinArr, time, localTime }: useBitcoinQueryType) {
   const [coin, setCoin] = useState('');
 
-  console.log('coinArr', coinArr);
   const onChangeCoin = (selectedOption: any) => {
     if (selectedOption) {
       setCoin(selectedOption.value);

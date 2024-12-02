@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { isDarkAtom } from '@/atoms';
 import localFont from 'next/font/local';
 import './globals.css';
 
@@ -28,7 +31,8 @@ export default function rootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  // const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  const [darkMode, setDarkMode] = useAtom(isDarkAtom);
 
   // 다크 모드 토글 핸들러
   const onClickDarkMode = () => {
