@@ -28,7 +28,7 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
   const gridRef = useRef<AgGridReact>(null);
   const [darkMode] = useAtom(isDarkAtom);
 
-  const columns: ColDef[] = [
+  const columnsDef: ColDef[] = [
     // rank, name,  priceUsd, marketCapUsd, changePercent24Hr, volumeUsd24Hr, vwap24Hr
     { headerName: '시가 총액 순위', field: 'rank', width: 150, cellDataType: 'number' },
     { headerName: '이름', field: 'name', width: 150, cellDataType: 'string' },
@@ -36,13 +36,11 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
       headerName: '가격 (USD)',
       field: 'priceUsd',
       cellDataType: 'number',
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
       headerName: '시가총액 (USD)',
       field: 'marketCapUsd',
       cellDataType: 'number',
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
       headerName: '24시간 변동률',
@@ -69,6 +67,8 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
     const node = gridRef.current?.api.getDisplayedRowAtIndex(2);
     if (node) {
       gridRef.current!.api.flashCells({ rowNodes: [node], columns: ['priceUsd'] });
+      const rowNode = gridRef.current!.api.getDisplayedRowAtIndex(2);
+      rowNode!.setDataValue('priceUsd', 10000);
     }
   };
 
@@ -76,7 +76,7 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
     <div>
       <button onClick={flashCell}>flashCell</button>
       <div className={getTheme()} style={{ height: 500 }}>
-        <AgGridReact ref={gridRef} rowData={coinArr} columnDefs={columns} defaultColDef={defaultColDef} />
+        <AgGridReact ref={gridRef} rowData={coinArr} columnDefs={columnsDef} defaultColDef={defaultColDef} />
       </div>
     </div>
   );
