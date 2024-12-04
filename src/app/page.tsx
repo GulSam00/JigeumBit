@@ -2,7 +2,6 @@
 
 import { APIComponent, Clock } from '@/components';
 import { useBitcoinQuery } from '@/queries';
-import CoinChart from './CoinChart';
 import CoinTable from './CoinTable';
 
 export default function Home() {
@@ -11,7 +10,6 @@ export default function Home() {
   return (
     <APIComponent {...{ isLoading, error }}>
       <CoinTable {...{ coinArr, time, localTime }} />
-      {/* <CoinChart {...{ coinArr, time, localTime }} /> */}
     </APIComponent>
   );
 }
