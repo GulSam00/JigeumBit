@@ -94,6 +94,7 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
         rowData={coinArr}
         columnDefs={columnsDef}
         defaultColDef={defaultColDef}
+        suppressDragLeaveHidesColumns={true}
       />
     </div>
   );
