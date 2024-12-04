@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useAtom } from 'jotai';
 
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import { ValueFormatterParams } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css'; // Mandatory CSS required by the Data Grid
 import 'ag-grid-community/styles/ag-theme-quartz.css'; // Optional Theme applied to the Data Grid
 
@@ -28,31 +29,53 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
   const gridRef = useRef<AgGridReact>(null);
   const [darkMode] = useAtom(isDarkAtom);
 
+  const parseNumberValue = (params: ValueFormatterParams) => {
+    return (
+      Number(params.value).toLocaleString(undefined, {
+        minimumFractionDigits: 5,
+        maximumFractionDigits: 5,
+      }) + '$'
+    );
+  };
+
   const columnsDef: ColDef[] = [
     // rank, name,  priceUsd, marketCapUsd, changePercent24Hr, volumeUsd24Hr, vwap24Hr
-    { headerName: '시가 총액 순위', field: 'rank', width: 150, cellDataType: 'number' },
+    { headerName: '시총 순위', field: 'rank', width: 100, cellDataType: 'number' },
     { headerName: '이름', field: 'name', width: 150, cellDataType: 'string' },
     {
       headerName: '가격 (USD)',
       field: 'priceUsd',
       cellDataType: 'number',
+      valueFormatter: parseNumberValue,
     },
     {
       headerName: '시가총액 (USD)',
       field: 'marketCapUsd',
       cellDataType: 'number',
+      valueFormatter: parseNumberValue,
     },
     {
       headerName: '24시간 변동률',
       field: 'changePercent24Hr',
       valueFormatter: (params: any) => `${params.value}%`,
     },
-    { headerName: '24시간 거래량 (USD)', field: 'volumeUsd24Hr', cellDataType: 'number' },
-    { headerName: '24시간 가중평균 (USD)', field: 'vwap24Hr', cellDataType: 'number' },
+    {
+      headerName: '24시간 거래량 (USD)',
+      field: 'volumeUsd24Hr',
+      cellDataType: 'number',
+      valueFormatter: parseNumberValue,
+    },
+    {
+      headerName: '24시간 가중평균 (USD)',
+      field: 'vwap24Hr',
+      cellDataType: 'number',
+      valueFormatter: parseNumberValue,
+    },
   ];
   const defaultColDef: ColDef = {
-    enableCellChangeFlash: true, // 데이터 변경 시 플래시 효과 활성화
+    // enableCellChangeFlash: true, // 데이터 변경 시 플래시 효과 활성화
     cellRenderer: 'agAnimateShowChangeCellRenderer',
+    width: 200,
   };
 
   if (!coinArr) {
@@ -63,21 +86,15 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
     return darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
   };
 
-  const flashCell = () => {
-    const node = gridRef.current?.api.getDisplayedRowAtIndex(2);
-    if (node) {
-      gridRef.current!.api.flashCells({ rowNodes: [node], columns: ['priceUsd'] });
-      const rowNode = gridRef.current!.api.getDisplayedRowAtIndex(2);
-      rowNode!.setDataValue('priceUsd', 10000);
-    }
-  };
-
   return (
-    <div>
-      <button onClick={flashCell}>flashCell</button>
-      <div className={getTheme()} style={{ height: 500 }}>
-        <AgGridReact ref={gridRef} rowData={coinArr} columnDefs={columnsDef} defaultColDef={defaultColDef} />
-      </div>
+    <div className={`${getTheme()} h-full w-full pt-[60px]`}>
+      <AgGridReact
+        className='text-right'
+        ref={gridRef}
+        rowData={coinArr}
+        columnDefs={columnsDef}
+        defaultColDef={defaultColDef}
+      />
     </div>
   );
 }

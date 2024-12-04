@@ -9,12 +9,9 @@ export default function Home() {
   const { coinArr, time, localTime, isLoading, error } = useBitcoinQuery();
 
   return (
-    <div>
-      {/* <Clock /> */}
-      <APIComponent {...{ isLoading, error }}>
-        <CoinTable {...{ coinArr, time, localTime }} />
-        <CoinChart {...{ coinArr, time, localTime }} />
-      </APIComponent>
-    </div>
+    <APIComponent {...{ isLoading, error }}>
+      <CoinTable {...{ coinArr, time, localTime }} />
+      {/* <CoinChart {...{ coinArr, time, localTime }} /> */}
+    </APIComponent>
   );
 }

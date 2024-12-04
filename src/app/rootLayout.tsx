@@ -58,12 +58,12 @@ export default function rootLayout({
       data-theme={darkMode ? 'dark' : 'light'}
     >
       <QueryClientProvider client={queryClient}>
-        <div className='flex justify-end border-2 p-2'>
+        <div className='fixed flex h-[60px] w-full justify-end border-2 p-2'>
           <button className='rounded-md border border-gray-300 px-2 py-1' onClick={onClickDarkMode}>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
         </div>
-        {children}
+        <div className='pt-15 flex h-full w-full'>{children}</div>
       </QueryClientProvider>
     </body>
   );
