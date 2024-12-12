@@ -3,15 +3,17 @@
 import { useState, useEffect } from 'react';
 
 import { APIComponent } from '@/components';
-import { useBitcoinQuery } from '@/queries';
+import { useBitcoinQuery, useBitHistoryQuery } from '@/queries';
 
 import { coinId } from '@/lib';
 import CoinChart from './CoinChart';
 import Select from 'react-select';
 
 export default function Home() {
-  const { coinArr, time, localTime, isLoading, error } = useBitcoinQuery();
   const [coin, setCoin] = useState('');
+
+  const { coinArr, time, localTime, isLoading, error } = useBitcoinQuery();
+  const { priceUsd, time: tt, isLoading: load, error: err } = useBitHistoryQuery({ coin: 'bitcoin', interval: 'd1' });
 
   const onChangeCoin = (selectedOption: any) => {
     if (selectedOption) {
