@@ -57,7 +57,15 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
     {
       headerName: '24시간 변동률',
       field: 'changePercent24Hr',
-      valueFormatter: (params: any) => `${params.value}%`,
+      valueFormatter: params => `${params.value}%`,
+      cellClassRules: {
+        greenFont: params => {
+          return params.value > 0;
+        },
+        redFont: params => {
+          return params.value < 0;
+        },
+      },
     },
     {
       headerName: '24시간 거래량 (USD)',
@@ -72,6 +80,7 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
       valueFormatter: parseNumberValue,
     },
   ];
+
   const defaultColDef: ColDef = {
     // enableCellChangeFlash: true, // 데이터 변경 시 플래시 효과 활성화
     cellRenderer: 'agAnimateShowChangeCellRenderer',
