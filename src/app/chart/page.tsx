@@ -1,27 +1,28 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 import { APIComponent } from '@/components';
-import { useBitcoinQuery, useBitHistoryQuery } from '@/queries';
+import { useBitHistoryQuery } from '@/queries';
 
 import { coinId } from '@/lib';
-import CoinChart from './CoinChart';
 import Select from 'react-select';
 
 export default function Home() {
-  const [coin, setCoin] = useState('');
+  const [coin, setCoin] = useState<string>('bitcoin');
+  const [interval, setInterval] = useState<string>('d1');
 
-  const { coinArr, time, localTime, isLoading, error } = useBitcoinQuery();
-  const { priceUsd, time: tt, isLoading: load, error: err } = useBitHistoryQuery({ coin: 'bitcoin', interval: 'd1' });
+  const { data, isLoading, error } = useBitHistoryQuery({ coin, interval });
 
   const onChangeCoin = (selectedOption: any) => {
     if (selectedOption) {
+      console.log(selectedOption);
       setCoin(selectedOption.value);
     }
   };
 
-  const options = Object.keys(coinId).map(key => {
+  const coinOptions = Object.keys(coinId).map(key => {
     return {
       value: key,
       label: key,
@@ -39,25 +40,39 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setCoin(options[0].value);
+    setCoin(coinOptions[0].value);
   }, []);
 
   return (
     <APIComponent {...{ isLoading, error }}>
-      <div>
-        최신 데이터 : {localTime}
-        선택한 코인 : {coin}
-        <Select options={options} styles={customStyles} defaultValue={options[0]} onChange={onChangeCoin} />
-        {coinArr?.map(item => {
-          return (
-            <div key={item.id}>
-              {item.name} : {item.priceUsd}
-            </div>
-          );
-        })}
-      </div>
+      <div className='flex h-full w-full flex-col items-center justify-center'>
+        <div>
+          선택한 코인 : {coin}
+          <Select options={coinOptions} styles={customStyles} onChange={onChangeCoin} />
+        </div>
 
-      <CoinChart {...{ coinArr, time, localTime }} />
+        {data && (
+          <ResponsiveContainer width='100%' height={400}>
+            <LineChart
+              width={500}
+              height={300}
+              data={data}
+              // margin={{
+              //   top: 5,
+              //   right: 30,
+              //   left: 20,
+              //   bottom: 5,
+              // }}
+            >
+              <CartesianGrid strokeDasharray='3 3' />
+              <XAxis dataKey='date' />
+              <YAxis />
+              <Tooltip />
+              <Line type='monotone' dataKey='priceUsd' stroke='#8884d8' />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </div>
     </APIComponent>
   );
 }

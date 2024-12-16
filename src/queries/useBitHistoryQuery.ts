@@ -1,46 +1,61 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 
-interface BitHistoryQuery {
+import axios from 'axios';
+import { format } from 'date-fns';
+
+interface HistoryArr {
+  date: string;
   priceUsd: string;
   time: number;
 }
 
-interface BitHistoryProps {
+interface ParsedArr {
+  date: string;
+  priceUsd: number;
+  time: number;
+}
+
+interface GetBitHistoryRequest {
   coin: string;
   interval: string;
 }
-export interface useBitcoinQueryType {
-  priceUsd: string;
-  time: number;
+
+interface GetBitHistoryResponse {
+  data: HistoryArr[];
+}
+
+export interface UseBitHistoryQueryType {
+  data: ParsedArr[];
   isLoading?: boolean;
   error?: any;
 }
 
-const getBitHistory = async ({ coin, interval }: BitHistoryProps) => {
+const getBitHistory = async ({ coin, interval }: GetBitHistoryRequest): Promise<GetBitHistoryResponse> => {
   const url = `/api/bitcoin/assets/history?coin=${coin}&interval=${interval}`;
-  console.log('url : ', url);
   const result = await axios.get(url);
-  const data = result.data;
-  console.log('getBitHistory : ', result);
-
-  return data;
+  const { data } = result.data;
+  return { data };
 };
 
-const useBitHistoryQuery = ({ coin, interval }: BitHistoryProps) => {
-  const { data, isLoading, error } = useQuery({
+const useBitHistoryQuery = ({ coin, interval }: GetBitHistoryRequest) => {
+  // useQuery 제네릭은 queryFn의 반환 값, error, select의 반환 값
+  const { data, isLoading, error } = useQuery<GetBitHistoryResponse, unknown, ParsedArr[]>({
     queryKey: ['bitHistory', coin, interval],
     queryFn: () => getBitHistory({ coin, interval }),
-    // queryFn 오류 시 select 호출 X
-    select: data => {
-      console.log(data);
-      const { priceUsd, time } = data;
-      return { priceUsd, time };
+    select: ({ data }: GetBitHistoryResponse) => {
+      // queryFn의 반환 값인 GetBitHistoryResponse
+      return data.map(item => ({
+        // date: format(new Date(item.date), 'yyyy-MM-dd HH:ss'),
+        date: format(new Date(item.date), 'yyyy-MM-dd'),
+        priceUsd: Number(item.priceUsd),
+        time: item.time,
+      }));
     },
+    // queryFn 오류 시 select 호출 X
+
     refetchInterval: 10000, // 10초마다 새로 고침
-    // refetchOnWindowFocus: true, // 창을 포커스하면 자동으로 새로 고침
   });
-  return { ...data, isLoading, error };
+  return { data, isLoading, error };
 };
 
 export default useBitHistoryQuery;
