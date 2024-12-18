@@ -45,16 +45,6 @@ export default function Home() {
     return value.split(' ')[1];
   };
 
-  // const customStyles = {
-  //   option: (provided: any, state: any) => ({
-  //     ...provided,
-  //     backgroundColor: state.isSelected ? '#FF5733' : state.isFocused ? '#FFC300' : 'background',
-  //     color: state.isSelected ? 'background' : 'foreground',
-  //     padding: 10,
-  //     cursor: 'pointer',
-  //   }),
-  // };
-
   return (
     <APIComponent {...{ isLoading, error }}>
       <div className='flex h-full w-full flex-col items-center gap-4 p-4'>
