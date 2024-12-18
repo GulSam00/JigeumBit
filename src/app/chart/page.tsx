@@ -9,26 +9,33 @@ import { useBitHistoryQuery } from '@/queries';
 import { coinId } from '@/lib';
 import Select from 'react-select';
 
+type CoinOptionType = {
+  value: string;
+  label: string;
+};
+
 export default function Home() {
-  const [coin, setCoin] = useState<string>('bitcoin');
-  const [selectInterval, setSelectInterval] = useState<number>(0);
-  const intervalOptions = ['m1', 'm5', 'm15', 'm30', 'h1', 'h2', 'h6', 'h12', 'd1'];
-
-  const { data, isLoading, error } = useBitHistoryQuery({ coin, interval: intervalOptions[selectInterval] });
-
-  const onChangeCoin = (selectedOption: any) => {
-    if (selectedOption) {
-      console.log(selectedOption);
-      setCoin(selectedOption.value);
-    }
-  };
-
-  const coinOptions = Object.keys(coinId).map(key => {
+  const coinOptions: CoinOptionType[] = Object.keys(coinId).map(key => {
     return {
       value: key,
       label: key,
     };
   });
+  const intervalOptions = ['m1', 'm5', 'm15', 'm30', 'h1', 'h2', 'h6', 'h12', 'd1'];
+
+  const [selectOption, setSelectOption] = useState<CoinOptionType>(coinOptions[0]);
+  const [selectInterval, setSelectInterval] = useState<number>(0);
+
+  const { data, isLoading, error } = useBitHistoryQuery({
+    coin: selectOption.value,
+    interval: intervalOptions[selectInterval],
+  });
+
+  const onChangeCoin = (option: any) => {
+    if (option) {
+      setSelectOption(option);
+    }
+  };
 
   const customStyles = {
     option: (provided: any, state: any) => ({
@@ -40,17 +47,22 @@ export default function Home() {
     }),
   };
 
-  useEffect(() => {
-    setCoin(coinOptions[0].value);
-  }, []);
+  // useEffect(() => {
+  //   setSelectOption(coinOptions[0]); // coinOptions의 첫 번째 값을 초기값으로 설정
+  // }, [coinOptions]);
 
   return (
     <APIComponent {...{ isLoading, error }}>
       <div className='flex h-full w-full flex-col items-center justify-center p-4'>
         <div className='flex w-full justify-between'>
           <div className='w-[200px]'>
-            선택한 코인 : {coin}
-            <Select options={coinOptions} styles={customStyles} onChange={onChangeCoin} />
+            선택한 코인 : {selectOption.label}
+            <Select
+              value={selectOption} // 현재 선택된 옵션
+              options={coinOptions}
+              styles={customStyles}
+              onChange={onChangeCoin}
+            />
           </div>
           <div className='flex h-full w-full items-end justify-end'>
             {intervalOptions.map((option, index) => {
