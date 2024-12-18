@@ -63,7 +63,7 @@ export default function rootLayout({
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
         </div>
-        <div className='pt-15 flex h-full w-full'>{children}</div>
+        <div className='pt-15 flex h-full w-full pt-[60px]'>{children}</div>
       </QueryClientProvider>
     </body>
   );

@@ -37,6 +37,25 @@ const getBitHistory = async ({ coin, interval }: GetBitHistoryRequest): Promise<
   return { data };
 };
 
+const getFormattedDate = (date: string, interval: string) => {
+  switch (interval) {
+    case 'm1':
+    case 'm5':
+    case 'm15':
+    case 'm30':
+      return format(new Date(date), 'yyyy-MM-dd HH:mm');
+    case 'h1':
+    case 'h2':
+    case 'h6':
+    case 'h12':
+      return format(new Date(date), 'yyyy-MM-dd HH:mm');
+    case 'd1':
+      return format(new Date(date), 'yyyy-MM-dd');
+    default:
+      return format(new Date(date), 'yyyy-MM-dd');
+  }
+};
+
 const useBitHistoryQuery = ({ coin, interval }: GetBitHistoryRequest) => {
   // useQuery 제네릭은 queryFn의 반환 값, error, select의 반환 값
   const { data, isLoading, error } = useQuery<GetBitHistoryResponse, unknown, ParsedArr[]>({
@@ -46,7 +65,7 @@ const useBitHistoryQuery = ({ coin, interval }: GetBitHistoryRequest) => {
       // queryFn의 반환 값인 GetBitHistoryResponse
       return data.map(item => ({
         // date: format(new Date(item.date), 'yyyy-MM-dd HH:ss'),
-        date: format(new Date(item.date), 'yyyy-MM-dd'),
+        date: getFormattedDate(item.date, interval),
         priceUsd: Number(item.priceUsd),
         time: item.time,
       }));

@@ -96,7 +96,7 @@ export default function CoinTable({ coinArr }: useBitcoinQueryType) {
   };
 
   return (
-    <div className={`${getTheme()} h-full w-full pt-[60px]`}>
+    <div className={`${getTheme()} h-full w-full`}>
       <AgGridReact
         className='text-right'
         ref={gridRef}
