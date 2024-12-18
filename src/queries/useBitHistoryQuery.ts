@@ -64,7 +64,6 @@ const useBitHistoryQuery = ({ coin, interval }: GetBitHistoryRequest) => {
     select: ({ data }: GetBitHistoryResponse) => {
       // queryFn의 반환 값인 GetBitHistoryResponse
       return data.map(item => ({
-        // date: format(new Date(item.date), 'yyyy-MM-dd HH:ss'),
         date: getFormattedDate(item.date, interval),
         priceUsd: Number(item.priceUsd),
         time: item.time,
